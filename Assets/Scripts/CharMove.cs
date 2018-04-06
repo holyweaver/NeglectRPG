@@ -4,13 +4,7 @@ using UnityEngine;
 
 public class CharMove : MonoBehaviour {
 
-	public enum charmotion
-	{
-		idle,
-		automove,
-		clickmove,
-
-	}
+    public CharState _Charstate;
 
 	public Vector2 maxpos;
 	public Vector2 minpos;
@@ -25,26 +19,18 @@ public class CharMove : MonoBehaviour {
 	public int randirnumx;
 	public int randirnumy;
 
-	public charmotion icharmotion;
-
 	public int movecount = 0;
 
+    int floorMask;
+    float camRayLengh = 100f;
 
+    void randomdir()
+    {
+        randirnumx = Random.Range(-1, 2);
+        randirnumy = Random.Range(-1, 2);
+    }
 
-	void charidle()
-	{
-
-		icharmotion = charmotion.automove;
-		
-	}
-
-	void charautomove()
-	{
-		AutoMovex ();
-		AutoMovey ();
-	}
-
-	void AutoMovex()
+    void AutoMovex()
 	{
 		charpos.x += movespeed * randirnumx * movedir.x; //dir값 -1 0 1 / movespeed값 0.01 ~ 0.02
 
@@ -60,12 +46,49 @@ public class CharMove : MonoBehaviour {
 
 	void ClickMove()
 	{
+        Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-	}
+        RaycastHit floorHit;
+
+        if (Physics.Raycast(camRay, out floorHit, camRayLengh, floorMask))
+        {
+            Vector3 playerToMouse = floorHit.point;
+
+            chartrans.position = playerToMouse;
+            
+        }
+    }
+
+    void MoveLimit()
+    {
+        if (charpos.x > maxpos.x)
+        {
+            charpos.x = maxpos.x;
+            randomdir();
+        }
+
+        if (charpos.x < minpos.x)
+        {
+            charpos.x = minpos.x;
+            randomdir();
+        }
+
+        if (charpos.y > maxpos.y)
+        {
+            charpos.y = maxpos.y;
+            randomdir();
+        }
+
+        if (charpos.y < minpos.y)
+        {
+            charpos.y = minpos.y;
+            randomdir();
+        }
+    }
 
 	void Awake()
 	{
-		//icharmotion = charmotion.idle;
+
 	}
 
 	// Use this for initialization
@@ -74,43 +97,29 @@ public class CharMove : MonoBehaviour {
 		chartrans = transform;
 		charpos = chartrans.position;
 		movedir = Vector2.one;
-		randirnumx = Random.Range (-1, 2);
-		randirnumy = Random.Range (-1, 2);
-
-	}
+        floorMask = LayerMask.GetMask("Floor");
+    }
 
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 
-		if (icharmotion == charmotion.idle) 
-		{
-			
-		}
-		else if (icharmotion == charmotion.automove) 
-		{
-			charautomove ();
-		}
+        if(_Charstate.stateC == CharState.Cstate.Idle)
+        {
+            randomdir();
+        }
 
-		if (charpos.x > maxpos.x) 
-		{
-			charpos.x = maxpos.x;
-		}
+        
+        if(_Charstate.stateC == CharState.Cstate.Auto)
+        {
+            AutoMovex();
+            AutoMovey();
+        }
 
-		if (charpos.x < minpos.x) 
-		{
-			charpos.x = minpos.x;
-		}
+        MoveLimit();
 
-		if (charpos.y > maxpos.y) 
-		{
-			charpos.y = maxpos.y;
-		}
+        ClickMove();
 
-		if (charpos.y < minpos.y) 
-		{
-			charpos.y = minpos.y;
-		}
-		
-		
-	}
+    }
+
+    
 }

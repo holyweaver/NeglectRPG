@@ -23,7 +23,8 @@ public class CharMove : MonoBehaviour {
 
     int floorMask;
     float camRayLengh = 100f;
-
+    public Vector3 playerToMouse;
+    
     void randomdir()
     {
         randirnumx = Random.Range(-1, 2);
@@ -46,17 +47,27 @@ public class CharMove : MonoBehaviour {
 
 	void ClickMove()
 	{
-        Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        RaycastHit floorHit;
-
-        if (Physics.Raycast(camRay, out floorHit, camRayLengh, floorMask))
+        if(Input.GetMouseButtonDown(0))
         {
-            Vector3 playerToMouse = floorHit.point;
 
-            chartrans.position = playerToMouse;
-            
+            _Charstate.stateC = CharState.Cstate.Click;
+
+            Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            RaycastHit floorHit;
+
+            if (Physics.Raycast(camRay, out floorHit, camRayLengh, floorMask))
+            {
+                playerToMouse = floorHit.point;
+                Debug.Log(playerToMouse);
+            }
         }
+
+        if (_Charstate.stateC == CharState.Cstate.Click)
+        {
+            chartrans.position = Vector3.MoveTowards(chartrans.position, playerToMouse, movespeed * Time.fixedDeltaTime);
+        }
+       
     }
 
     void MoveLimit()
@@ -108,11 +119,10 @@ public class CharMove : MonoBehaviour {
             randomdir();
         }
 
-        
         if(_Charstate.stateC == CharState.Cstate.Auto)
         {
-            AutoMovex();
-            AutoMovey();
+            //AutoMovex();
+            //AutoMovey();
         }
 
         MoveLimit();
@@ -121,5 +131,4 @@ public class CharMove : MonoBehaviour {
 
     }
 
-    
 }

@@ -30,21 +30,29 @@ public class CharState : MonoBehaviour {
     {
         yield return new WaitForSeconds(3);
 
-        stateC = Cstate.Auto;
+        if(stateC == Cstate.Idle )
+        {
+            stateC = Cstate.Auto;
 
-        NextState_();
+            NextState_();
+        }
+        
     }
 
     IEnumerator AutoC()
     {
         yield return new WaitForSeconds(3);
 
-        stateC = Cstate.Idle;
+        if (stateC == Cstate.Auto )
+        {
+            stateC = Cstate.Idle;
 
-        NextState_();
+            NextState_();
+        }
+         
     }
 
-    void NextState_()
+    public void NextState_()
     {
         string MethodName = stateC + "C";
         Debug.Log(MethodName);

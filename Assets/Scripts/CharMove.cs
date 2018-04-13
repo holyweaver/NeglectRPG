@@ -11,8 +11,8 @@ public class CharMove : MonoBehaviour {
 
 	public Vector3 charpos;
 
-	public float movespeed;
-	public Vector2 movedir;
+	public float AutoMoveSpeed;
+    public float ClickMoveSpeed;
 
 	public Transform chartrans;
 
@@ -33,14 +33,14 @@ public class CharMove : MonoBehaviour {
 
     void AutoMovex()
 	{
-		charpos.x += movespeed * randirnumx * movedir.x; //dir값 -1 0 1 / movespeed값 0.01 ~ 0.02
+		charpos.x += AutoMoveSpeed * randirnumx; //dir값 -1 0 1 / movespeed값 0.01 ~ 0.02
 
 		chartrans.position = charpos;
 	}
 		
 	void AutoMovey()
 	{
-		charpos.y += movespeed * randirnumy * movedir.y;
+		charpos.y += AutoMoveSpeed * randirnumy;
 
 		chartrans.position = charpos;
 	}
@@ -65,7 +65,16 @@ public class CharMove : MonoBehaviour {
 
         if (_Charstate.stateC == CharState.Cstate.Click)
         {
-            chartrans.position = Vector3.MoveTowards(chartrans.position, playerToMouse, movespeed * Time.fixedDeltaTime);
+            chartrans.position = Vector3.MoveTowards(chartrans.position, playerToMouse, ClickMoveSpeed * Time.fixedDeltaTime);
+
+            if (chartrans.position == playerToMouse)
+            {
+                _Charstate.stateC = CharState.Cstate.Idle;
+
+                charpos = chartrans.position;
+
+                _Charstate.NextState_();
+            }
         }
        
     }
@@ -107,7 +116,6 @@ public class CharMove : MonoBehaviour {
 
 		chartrans = transform;
 		charpos = chartrans.position;
-		movedir = Vector2.one;
         floorMask = LayerMask.GetMask("Floor");
     }
 
@@ -121,8 +129,8 @@ public class CharMove : MonoBehaviour {
 
         if(_Charstate.stateC == CharState.Cstate.Auto)
         {
-            //AutoMovex();
-            //AutoMovey();
+            AutoMovex();
+            AutoMovey();
         }
 
         MoveLimit();

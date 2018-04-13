@@ -265,8 +265,8 @@ MonoBehaviour:
   maxpos: {x: 6, y: 4}
   minpos: {x: -6, y: -4}
   charpos: {x: 0, y: 0, z: 0}
-  movespeed: 1
-  movedir: {x: 0, y: 0}
+  AutoMoveSpeed: 0.1
+  ClickMoveSpeed: 10
   chartrans: {fileID: 0}
   randirnumx: 0
   randirnumy: 0
